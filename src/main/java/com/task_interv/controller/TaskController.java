@@ -1,16 +1,17 @@
 package com.task_interv.controller;
 
 
+import com.task_interv.dto.requestDTO.PageinationRequestDTO;
+import com.task_interv.dto.requestDTO.PaginationTask;
 import com.task_interv.dto.requestDTO.TaskRequest;
 import com.task_interv.dto.responseDTO.GlobalResponse;
 import com.task_interv.serviceImpl.TaskServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
 import java.util.Random;
 
 @RestController
@@ -38,6 +39,18 @@ public class TaskController {
         GlobalResponse<Object> objectGlobalResponse = taskService.postTask(taskRequest, corralationId);
 
         return ResponseEntity.ok(objectGlobalResponse);
+
+    }
+
+    @GetMapping("/all_task")
+    public ResponseEntity<GlobalResponse<Object>> getAllTask(
+            @RequestParam(required = false) Integer page,
+            @RequestParam(required = false) Integer size,
+            @RequestParam(required = false) String sortField,
+            @RequestParam(required = false) Sort.Direction direction){
+      final PaginationTask request = new PaginationTask(page, size,sortField,direction);
+        GlobalResponse<Object> allTask = taskService.getAllTask(request);
+        return ResponseEntity.ok(allTask);
 
     }
 

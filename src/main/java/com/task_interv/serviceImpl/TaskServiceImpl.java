@@ -11,9 +11,7 @@ import com.task_interv.repository.TaskRepository;
 import com.task_interv.service.TaskInterface;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -33,18 +31,25 @@ public class TaskServiceImpl implements TaskInterface {
 
         Pageable pageableTask = TaskPaginator.getPageableTask(request);
         Page<Task> allTask = taskRepository.findAll(pageableTask);
-        final List<Task> entitiesDto = allTask.stream().map(mapper::).toList();
-
-
-
+        final List<Task> entitiesDto = allTask.stream().toList();
 
         PagingResult pagingResult = PagingResult.builder()
-                .content(allTask)
-                .totalPages(pageableTask.getNumberOfPages())
-                .totalElements(pageableTask.get)
+                .content(entitiesDto)
+                .totalPages(allTask.getTotalPages())
+                .totalElements(allTask.getTotalElements())
+                .size(allTask.getSize())
+                .empty(allTask.isEmpty())
+                .page(allTask.getNumber())
+                .build();
+
+        GlobalResponse<Object> response = GlobalResponse.builder()
+
+                .data(pagingResult)
+                .message("successfully fetched")
+                .build();
 
 
-        return null;
+        return response;
     }
 
     @Override
